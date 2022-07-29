@@ -9,6 +9,8 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     CarbonBlockStorage: typeof import('~icons/carbon/block-storage')['default']
     CarbonForIbmProduct: typeof import('~icons/carbon/for-ibm-product')['default']
+    CarbonMoon: typeof import('~icons/carbon/moon')['default']
+    CarbonRainDrop: typeof import('~icons/carbon/rain-drop')['default']
     CarbonSun: typeof import('~icons/carbon/sun')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElButton: typeof import('element-plus/es')['ElButton']
@@ -30,5 +32,6 @@ declare module '@vue/runtime-core' {
     Header: typeof import('./src/components/common/Header.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Sidebar: typeof import('./src/components/common/Sidebar.vue')['default']
   }
 }
