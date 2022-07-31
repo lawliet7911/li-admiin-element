@@ -18,11 +18,11 @@ export const useLiStorage = {
     }
     localStorage.setItem(key, JSON.stringify(save))
     if (expTime > 0) {
-      localStorage.setItem(
+      this.set(
         key + "-expTime",
-        new Date()
-          .setHours(parseInt(new Date().getHours().toString()) + expTime)
-          .toString()
+        new Date().setHours(
+          parseInt(new Date().getHours().toString()) + expTime
+        )
       )
     }
   },
@@ -38,7 +38,7 @@ export const useLiStorage = {
       if (!re.type) return ""
       if (["string", "object"].includes(re.type)) return re.data
       if (re.type === "number") {
-        if (re.data.includes(".")) return parseFloat(re.data)
+        return re.data.includes ? parseFloat(re.data) : parseInt(re.data)
       }
       if (re.type === "array") return re.data.split(",")
       if (re.type === "bigint") return BigInt(re.data)
