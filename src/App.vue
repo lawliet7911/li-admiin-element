@@ -1,6 +1,10 @@
 <script setup lang="ts">
-let title = useTitle()
-title.value = 'element-plus模板'
+import { useUserState } from './store';
+
+let isDark = useDark()
+// let title = useTitle()
+// title.value = 'element-plus模板'
+const user = useUserState();
 </script>
 
 <template>
@@ -8,17 +12,4 @@ title.value = 'element-plus模板'
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-}
-
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
 </style>

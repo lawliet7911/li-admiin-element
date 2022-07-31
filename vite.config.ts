@@ -6,6 +6,9 @@ import AutoImport from "unplugin-auto-import/vite"
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers"
 import Icons from "unplugin-icons/vite"
 import IconsResolver from "unplugin-icons/resolver"
+import dotenv from 'dotenv'
+dotenv.config({path:`.env.${process.env.NODE_ENV}`}); 
+
 export default defineConfig({
   resolve: {
     alias: {
@@ -43,5 +46,13 @@ export default defineConfig({
   server: {
     host: true,
     open: true,
+    cors: true,
+    proxy: {
+      '^.api': {
+        target: process.env.API_URL,
+        ws: true,
+        secure: false,
+      },
+    },
   },
 })

@@ -5,13 +5,15 @@ let menuState = useConfigState();
 
 
 <template>
-  <el-menu :collapse="menuState.menuCollapse" class="_menu">
-    <div class="logo">
-      <span class="sys-logo">
-        <carbon-rain-drop/>
-      </span>
+  <div class="logo">
+    <span class="sys-logo">
+      <carbon-rain-drop />
+    </span>
+    <Transition name="mt">
       <span v-if="!menuState.menuCollapse" class="sys-title">管理系统</span>
-    </div>
+    </Transition>
+  </div>
+  <el-menu :collapse="menuState.menuCollapse" class="_menu">
     <el-menu-item index="1">
       <el-icon>
         <carbon-block-storage />
@@ -44,24 +46,47 @@ let menuState = useConfigState();
 
 <style lang="scss" scoped>
 ._menu {
-  height: 100vh;
+  height: calc(100vh - 60px);
 }
 
 .logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 50px;
+  height: 60px;
   color: var(--el-text-color-primary);
+  background-color: var(--el-bg-color);
   font-size: 22px;
+  overflow: hidden;
+  border-right: solid 1px var(--el-menu-border-color);
+
+  .mt-enter-active {
+    transition: all var(--el-transition-duration) ease-out;
+  }
+
+  .mt-leave-active {
+    position: absolute;
+    transition: all var(--el-transition-duration) var(--el-transition-function-ease-in-out-bezier);
+  }
+
+  .mt-enter-from,
+  .mt-leave-to {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
   .sys-logo {
     position: relative;
     top: 2px;
   }
+
   .sys-title {
     font-weight: 700;
+    text-overflow: ellipsis;
+    word-break: keep-all;
   }
 }
+
 
 ._menu:not(.el-menu--collapse) {
   width: 240px;

@@ -11,7 +11,7 @@
         <Header></Header>
       </el-header>
       <el-main>
-        <!-- main - container -->
+        <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
