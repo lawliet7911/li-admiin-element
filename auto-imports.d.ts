@@ -2,6 +2,11 @@
 export {}
 declare global {
   const EffectScope: typeof import('vue')['EffectScope']
+  const IconCarbonFitToScreen: typeof import('~icons/carbon/fit-to-screen')['default']
+  const IconCarbonLogout: typeof import('~icons/carbon/logout')['default']
+  const IconCarbonMinimize: typeof import('~icons/carbon/minimize')['default']
+  const IconCarbonMoon: typeof import('~icons/carbon/moon')['default']
+  const IconCarbonSun: typeof import('~icons/carbon/sun')['default']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const axios: typeof import('axios')['default']
@@ -260,6 +265,11 @@ import { UnwrapRef } from 'vue'
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly IconCarbonFitToScreen: UnwrapRef<typeof import('~icons/carbon/fit-to-screen')['default']>
+    readonly IconCarbonLogout: UnwrapRef<typeof import('~icons/carbon/logout')['default']>
+    readonly IconCarbonMinimize: UnwrapRef<typeof import('~icons/carbon/minimize')['default']>
+    readonly IconCarbonMoon: UnwrapRef<typeof import('~icons/carbon/moon')['default']>
+    readonly IconCarbonSun: UnwrapRef<typeof import('~icons/carbon/sun')['default']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly axios: UnwrapRef<typeof import('axios')['default']>

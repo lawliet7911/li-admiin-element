@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 
 import { useConfigState, useUserState } from '~/store'
+import { HeaderBtnOption } from '~/types/index';
+
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
 
@@ -15,6 +17,32 @@ const logout = () => {
   userState.logout()
   router.push({ name: 'Login' })
 }
+
+let opts = ref<HeaderBtnOption[]>([{
+  name: '全屏',
+  tooltip: true,
+  tip: fullText,
+  placement: 'bottom',
+  icon: [IconCarbonFitToScreen, IconCarbonMinimize], // issue see - https://github.com/antfu/unplugin-icons/issues/5
+  switch: isFullscreen,
+  trigger: toggleFull
+}, {
+  name: '明暗',
+  tooltip: true,
+  tip: '明暗模式',
+  placement: 'bottom',
+  icon: [IconCarbonMoon, IconCarbonSun], // issue see - https://github.com/antfu/unplugin-icons/issues/5
+  switch: isDark,
+  trigger: () => toggleDark()
+}, {
+  name: '退出登录',
+  tooltip: true,
+  tip: '退出登录',
+  placement: 'bottom',
+  icon: [IconCarbonLogout], // issue see - https://github.com/antfu/unplugin-icons/issues/5
+  trigger: logout
+}])
+
 </script>
 
 <template>
@@ -24,7 +52,18 @@ const logout = () => {
       <ep-expand v-else />
     </el-icon>
     <div class="fn-buttons">
-      <el-tooltip :content="fullText" placement="bottom">
+      <template v-for="item in opts" :key="item.name">
+        <template v-if="item.tooltip">
+          <el-tooltip :content="item.tip" :placement="item.placement">
+            <header-btn-item :option="item"></header-btn-item>
+          </el-tooltip>
+        </template>
+        <template v-else>
+          <header-btn-item :option="item"></header-btn-item>
+        </template>
+      </template>
+
+      <!-- <el-tooltip :content="fullText" placement="bottom">
         <div class="fn-icon cursor-pointer" @click="toggleFull()">
           <carbon-minimize v-if="isFullscreen" />
           <carbon-fit-to-screen v-else />
@@ -40,7 +79,7 @@ const logout = () => {
         <div class="fn-icon cursor-pointer" @click="logout()">
           <carbon-logout />
         </div>
-      </el-tooltip>
+      </el-tooltip> -->
 
     </div>
   </div>

@@ -37,6 +37,10 @@ body {
   color: var(--el-text-color-primary);
 }
 
+.el-main {
+  position: relative;
+  overflow: hidden !important;
+}
 
 .cursor-pointer {
   cursor: pointer;

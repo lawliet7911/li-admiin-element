@@ -6,8 +6,9 @@ import AutoImport from "unplugin-auto-import/vite"
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers"
 import Icons from "unplugin-icons/vite"
 import IconsResolver from "unplugin-icons/resolver"
-import dotenv from "dotenv"
-dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
+
+// import dotenv from "dotenv"
+// dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
 
 export default defineConfig({
   resolve: {
@@ -18,8 +19,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: 
-          `@import "~/assets/styles/mixins.scss";
+        additionalData: `@import "~/assets/styles/mixins.scss";
           @import "~/assets/styles/vars.scss";`, // 预处理
       },
     },
@@ -37,13 +37,23 @@ export default defineConfig({
           ],
         },
       ],
+      // 自动将图标以icon开头组件导入 !!!
+      resolvers: [
+        IconsResolver({
+          componentPrefix: "icon",
+          enabledCollections: ["carbon", "ep"],
+        }),
+      ],
       dts: true,
       vueTemplate: true,
     }),
     Components({
       resolvers: [
         ElementPlusResolver(),
-        IconsResolver({ prefix: false, enabledCollections: ["ep", "carbon"] }), // ep - element-plus / carbon - iconify-carbon
+        IconsResolver({
+          prefix: false,
+          enabledCollections: ["ep", "carbon"],
+        }), // ep - element-plus / carbon - iconify-carbon
       ],
       dts: true,
     }),
@@ -57,7 +67,8 @@ export default defineConfig({
     cors: true,
     proxy: {
       "^.api": {
-        target: process.env.API_URL,
+        target: "http://192.168.0.107:5656",
+        // target: process.env.API_URL,
         ws: true,
         secure: false,
       },

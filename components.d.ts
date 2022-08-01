@@ -35,6 +35,7 @@ declare module '@vue/runtime-core' {
     EpFold: typeof import('~icons/ep/fold')['default']
     EpLocation: typeof import('~icons/ep/location')['default']
     Header: typeof import('./src/components/common/Header.vue')['default']
+    HeaderBtnItem: typeof import('./src/components/common/headerBtnItem.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Sidebar: typeof import('./src/components/common/Sidebar.vue')['default']
