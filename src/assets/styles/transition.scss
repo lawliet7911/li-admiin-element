@@ -17,15 +17,22 @@ $--login-animation-duration: .45s;
 
 .sub-enter-active {
   transition: all $page-transition-duration ease-out;
+  width: 100%;
+  position: absolute;
 }
 
 .sub-leave-active {
-  position: absolute;
+  width: 100%;
   transition: all $page-transition-duration var(--el-transition-function-ease-in-out-bezier);
+}
+
+.sub-leave-from {
+  width: 100%;
 }
 
 .sub-enter-from,
 .sub-leave-to {
+  width: 100%;
   transform: translateX(40px);
   opacity: 0;
 }

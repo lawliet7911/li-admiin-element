@@ -1,16 +1,23 @@
-import { createRouter, createWebHashHistory, NavigationGuardNext, RouteRecordRaw } from "vue-router"
+import {
+  createRouter,
+  createWebHashHistory,
+  NavigationGuardNext,
+  RouteLocationRaw,
+  RouteRecordRaw,
+} from "vue-router"
 import { useUserState } from "~/store"
+const DEFAULT_TITLE: string = "Li管理系统"
 
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
     name: "Home",
-    alias: '/home',
+    alias: "/home",
     component: () => import("~/pages/Home/index.vue"),
     children: [
       {
         path: "/",
-        redirect: 'dashboard'
+        redirect: "dashboard",
       },
       {
         path: "/dashboard",
@@ -23,20 +30,23 @@ const routes: RouteRecordRaw[] = [
         component: () => import("~/pages/demo/demo1.vue"),
       },
       {
-          path: '/:all(.*)*',
-          name: 'PageNotFound',
-          component: () => import("~/pages/error-page/[...all].vue"),
-          meta: {
-            title: '找不到页面'
-          }
-      }
-    ]
+        path: "/:all(.*)*",
+        name: "PageNotFound",
+        component: () => import("~/pages/error-page/[...all].vue"),
+        meta: {
+          title: "找不到页面",
+        },
+      },
+    ],
   },
   {
     path: "/login",
     name: "Login",
+    meta: {
+      title: "登录",
+    },
     component: () => import("~/pages/login/index.vue"),
-  }
+  },
 ]
 
 let router = createRouter({
@@ -46,24 +56,32 @@ let router = createRouter({
 
 router.beforeEach((to, from, next: NavigationGuardNext) => {
   let userState = useUserState()
+  let title = useTitle()
+  let nextOption: null | RouteLocationRaw = null
   // 未登录
   if (to.name != "Login") {
     if ((userState.user as any)?.id) {
-      next()
+      // next()
     } else {
-      next({ name: "Login" })
+      // next({ name: "Login" })
+      nextOption = { name: "Login" }
     }
   } else {
-    // next();
     if ((userState.user as any)?.id) {
-      next({ name: "Home" })
+      nextOption = { name: "Home" }
     } else {
       if (to.params.logout !== undefined) next()
       else {
-        next({ name: "Login", params: { logout: !!to.params.logout ? 1 : 0 } })
+        nextOption = {
+          name: "Login",
+          params: { logout: !!to.params.logout ? 1 : 0 },
+        }
       }
     }
   }
+  title.value = (to.meta.title as string) || DEFAULT_TITLE
+  if(!nextOption) next()
+  else next(nextOption)
 })
 
 export default router

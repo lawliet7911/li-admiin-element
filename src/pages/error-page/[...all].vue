@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-const router = useRouter();
-let title = useTitle()
-title.value = router.currentRoute.value.meta.title as string;
 </script>
 
 <template>
