@@ -40,7 +40,7 @@ const login = (formRef: FormInstance): void => {
       delete d.pwd
       userState.setUser(d)
       if (loginOptions.value.remember) useLiStorage.set('user', d, loginOptions.value.exp * 24)
-      router.push({ name: 'Home' })
+      router.push({ path:'/' })
     } else {
       ElMessage({
         type: 'error',

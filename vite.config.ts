@@ -6,13 +6,22 @@ import AutoImport from "unplugin-auto-import/vite"
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers"
 import Icons from "unplugin-icons/vite"
 import IconsResolver from "unplugin-icons/resolver"
-import dotenv from 'dotenv'
-dotenv.config({path:`.env.${process.env.NODE_ENV}`}); 
+import dotenv from "dotenv"
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
 
 export default defineConfig({
   resolve: {
     alias: {
       "~/": `${path.resolve(__dirname, "src")}/`,
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: 
+          `@import "~/assets/styles/mixins.scss";
+          @import "~/assets/styles/vars.scss";`, // 预处理
+      },
     },
   },
   plugins: [
@@ -24,7 +33,6 @@ export default defineConfig({
         "@vueuse/core",
         {
           axios: [
-            // default imports
             ["default", "axios"], // import { default as axios } from 'axios',
           ],
         },
@@ -35,12 +43,12 @@ export default defineConfig({
     Components({
       resolvers: [
         ElementPlusResolver(),
-        IconsResolver({ prefix: false, enabledCollections: ["ep", "carbon"] }),
+        IconsResolver({ prefix: false, enabledCollections: ["ep", "carbon"] }), // ep - element-plus / carbon - iconify-carbon
       ],
       dts: true,
     }),
     Icons({
-      autoInstall: true
+      autoInstall: true,
     }),
   ],
   server: {
@@ -48,7 +56,7 @@ export default defineConfig({
     open: true,
     cors: true,
     proxy: {
-      '^.api': {
+      "^.api": {
         target: process.env.API_URL,
         ws: true,
         secure: false,

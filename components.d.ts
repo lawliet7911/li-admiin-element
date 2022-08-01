@@ -8,7 +8,9 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     CarbonBlockStorage: typeof import('~icons/carbon/block-storage')['default']
+    CarbonFitToScreen: typeof import('~icons/carbon/fit-to-screen')['default']
     CarbonLogout: typeof import('~icons/carbon/logout')['default']
+    CarbonMinimize: typeof import('~icons/carbon/minimize')['default']
     CarbonMoon: typeof import('~icons/carbon/moon')['default']
     CarbonRainDrop: typeof import('~icons/carbon/rain-drop')['default']
     CarbonSun: typeof import('~icons/carbon/sun')['default']

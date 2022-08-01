@@ -3,6 +3,10 @@
 import { useConfigState, useUserState } from '~/store'
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
+
+const { isFullscreen, toggle: toggleFull } = useFullscreen()
+let fullText = computed(() => isFullscreen.value ? '退出全屏' : '全屏')
+
 let menuState = useConfigState();
 let userState = useUserState();
 
@@ -11,7 +15,6 @@ const logout = () => {
   userState.logout()
   router.push({ name: 'Login' })
 }
-
 </script>
 
 <template>
@@ -21,6 +24,12 @@ const logout = () => {
       <ep-expand v-else />
     </el-icon>
     <div class="fn-buttons">
+      <el-tooltip :content="fullText" placement="bottom">
+        <div class="fn-icon cursor-pointer" @click="toggleFull()">
+          <carbon-minimize v-if="isFullscreen" />
+          <carbon-fit-to-screen v-else />
+        </div>
+      </el-tooltip>
       <el-tooltip content="明暗模式" placement="bottom">
         <div class="fn-icon cursor-pointer" @click="toggleDark()">
           <carbon-sun v-if="isDark" />

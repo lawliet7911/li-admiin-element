@@ -11,7 +11,11 @@
         <Header></Header>
       </el-header>
       <el-main>
-        <router-view></router-view>
+        <router-view v-slot="{ Component , route }">
+          <transition name="sub">
+            <component :is="Component" />
+          </transition>
+        </router-view>
       </el-main>
     </el-container>
   </el-container>

@@ -14,33 +14,34 @@ let menuState = useConfigState();
     </Transition>
   </div>
   <el-menu :collapse="menuState.menuCollapse" class="_menu">
-    <el-menu-item index="1">
-      <el-icon>
-        <carbon-block-storage />
-      </el-icon>
-      <span>控制面板</span>
-    </el-menu-item>
+    <router-link to="/">
+      <el-menu-item index="1">
+        <el-icon>
+          <carbon-block-storage />
+        </el-icon>
+        <span>控制面板</span>
+      </el-menu-item>
+    </router-link>
     <el-sub-menu index="2">
       <template #title>
         <el-icon>
           <ep-location />
         </el-icon>
-        <span>导航1</span>
+        <span>Demos</span>
       </template>
-      <el-menu-item index="1-2">测试1</el-menu-item>
-      <el-menu-item index="1-3">测试2</el-menu-item>
+      <router-link to="/demo1">
+        <el-menu-item index="1-2">demo1</el-menu-item>
+      </router-link>
+      <!-- 404 -->
+      <router-link to="/demo404">
+        <el-menu-item index="1-3">404page</el-menu-item>
+      </router-link>
 
       <el-sub-menu index="1-4">
         <template #title>三级测试</template>
         <el-menu-item index="1-4-1">三级-1</el-menu-item>
       </el-sub-menu>
     </el-sub-menu>
-    <el-menu-item index="3">
-      <el-icon>
-        <ep-menu />
-      </el-icon>
-      <span>导航2</span>
-    </el-menu-item>
   </el-menu>
 </template>
 
@@ -50,9 +51,7 @@ let menuState = useConfigState();
 }
 
 .logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center();
   height: 60px;
   color: var(--el-text-color-primary);
   background-color: var(--el-bg-color);

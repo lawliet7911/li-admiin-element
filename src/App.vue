@@ -23,21 +23,3 @@ if (user_expTime < new Date().getTime()) {
     </transition>
   </router-view>
 </template>
-
-<style lang="scss" scoped>
-$--login-animation-duration: .45s;
-
-.login-enter-active {
-  transition: all $--login-animation-duration ease-out;
-}
-
-.login-leave-active {
-  opacity: 0;
-}
-
-.login-enter-from,
-.login-leave-to {
-  transform: translateX(-100px);
-  opacity: 0;
-}
-</style>

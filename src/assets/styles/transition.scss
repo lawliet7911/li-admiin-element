@@ -1,0 +1,31 @@
+$page-transition-duration: .4s;
+$--login-animation-duration: .45s;
+
+.login-enter-active {
+  transition: all $--login-animation-duration ease-out;
+}
+
+.login-leave-active {
+  opacity: 0;
+}
+
+.login-enter-from,
+.login-leave-to {
+  transform: translateX(-100px);
+  opacity: 0;
+}
+
+.sub-enter-active {
+  transition: all $page-transition-duration ease-out;
+}
+
+.sub-leave-active {
+  position: absolute;
+  transition: all $page-transition-duration var(--el-transition-function-ease-in-out-bezier);
+}
+
+.sub-enter-from,
+.sub-leave-to {
+  transform: translateX(40px);
+  opacity: 0;
+}

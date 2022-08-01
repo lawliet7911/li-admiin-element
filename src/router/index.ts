@@ -5,13 +5,38 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/",
     name: "Home",
+    alias: '/home',
     component: () => import("~/pages/Home/index.vue"),
+    children: [
+      {
+        path: "/",
+        redirect: 'dashboard'
+      },
+      {
+        path: "/dashboard",
+        name: "DashBoard",
+        component: () => import("~/pages/home/dashboard.vue"),
+      },
+      {
+        path: "/demo1",
+        name: "demo1",
+        component: () => import("~/pages/demo/demo1.vue"),
+      },
+      {
+          path: '/:all(.*)*',
+          name: 'PageNotFound',
+          component: () => import("~/pages/error-page/[...all].vue"),
+          meta: {
+            title: '找不到页面'
+          }
+      }
+    ]
   },
   {
     path: "/login",
     name: "Login",
     component: () => import("~/pages/login/index.vue"),
-  },
+  }
 ]
 
 let router = createRouter({
@@ -39,7 +64,6 @@ router.beforeEach((to, from, next: NavigationGuardNext) => {
       }
     }
   }
-  next()
 })
 
 export default router
