@@ -13,7 +13,9 @@
       <el-main>
         <router-view v-slot="{ Component , route }">
           <transition name="sub">
-            <component :is="Component" />
+            <keep-alive>
+              <component :is="Component" />
+            </keep-alive>
           </transition>
         </router-view>
       </el-main>
@@ -27,6 +29,7 @@
   display: flex;
 
   .header {
+    height: auto;
     padding: 0;
   }
 

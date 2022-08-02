@@ -6,14 +6,13 @@ const props = defineProps({
   option: Object
 })
 
-let iconCom = computed(() => {
-  return (flag: boolean | Ref<boolean> | undefined, components: any[]) => {
-    if (!components) return ''
-    if (flag === undefined) return components[0]
-    let fg: Ref<boolean> = isRef(flag) ? flag as Ref<boolean> : ref(flag);
-    return toRaw(fg.value ? components[1] : components[0])
-  }
-})
+let iconCom = (flag: boolean | Ref<boolean> | undefined, components: any[]) => {
+  if (!components) return ''
+  if (flag === undefined) return components[0]
+  let fg: Ref<boolean> = isRef(flag) ? flag as Ref<boolean> : ref(flag);
+  return toRaw(fg.value ? components[1] : components[0])
+}
+
 </script>
 <template>
   <div class="fn-icon cursor-pointer" @click="((props.option as HeaderBtnOption).trigger as any)">

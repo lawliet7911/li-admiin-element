@@ -6,6 +6,8 @@ import {
   RouteRecordRaw,
 } from "vue-router"
 import { useUserState } from "~/store"
+import { useTabsStore } from "~/store/tabs"
+import { Guard } from "./routerGuard"
 const DEFAULT_TITLE: string = "Li管理系统"
 
 const routes: RouteRecordRaw[] = [
@@ -23,11 +25,13 @@ const routes: RouteRecordRaw[] = [
         path: "/dashboard",
         name: "DashBoard",
         component: () => import("~/pages/home/dashboard.vue"),
+        meta: { title: "面板" },
       },
       {
         path: "/demo1",
         name: "demo1",
         component: () => import("~/pages/demo/demo1.vue"),
+        meta: { title: "DEmo1" },
       },
       {
         path: "/:all(.*)*",
@@ -54,34 +58,6 @@ let router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from, next: NavigationGuardNext) => {
-  let userState = useUserState()
-  let title = useTitle()
-  let nextOption: null | RouteLocationRaw = null
-  // 未登录
-  if (to.name != "Login") {
-    if ((userState.user as any)?.id) {
-      // next()
-    } else {
-      // next({ name: "Login" })
-      nextOption = { name: "Login" }
-    }
-  } else {
-    if ((userState.user as any)?.id) {
-      nextOption = { name: "Home" }
-    } else {
-      if (to.params.logout !== undefined) next()
-      else {
-        nextOption = {
-          name: "Login",
-          params: { logout: !!to.params.logout ? 1 : 0 },
-        }
-      }
-    }
-  }
-  title.value = (to.meta.title as string) || DEFAULT_TITLE
-  if(!nextOption) next()
-  else next(nextOption)
-})
+router.beforeEach(Guard)
 
 export default router

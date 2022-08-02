@@ -40,6 +40,7 @@ body {
 .el-main {
   position: relative;
   overflow: hidden !important;
+  --el-main-padding: 15px !important;
 }
 
 .cursor-pointer {

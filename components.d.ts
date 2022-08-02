@@ -8,6 +8,7 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     CarbonBlockStorage: typeof import('~icons/carbon/block-storage')['default']
+    CarbonDelete: typeof import('~icons/carbon/delete')['default']
     CarbonFitToScreen: typeof import('~icons/carbon/fit-to-screen')['default']
     CarbonLogout: typeof import('~icons/carbon/logout')['default']
     CarbonMinimize: typeof import('~icons/carbon/minimize')['default']
@@ -31,11 +32,13 @@ declare module '@vue/runtime-core' {
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSubMenu: typeof import('element-plus/es')['ElSubMenu']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    EpClose: typeof import('~icons/ep/close')['default']
     EpExpand: typeof import('~icons/ep/expand')['default']
     EpFold: typeof import('~icons/ep/fold')['default']
     EpLocation: typeof import('~icons/ep/location')['default']
     Header: typeof import('./src/components/common/Header.vue')['default']
     HeaderBtnItem: typeof import('./src/components/common/headerBtnItem.vue')['default']
+    NavTab: typeof import('./src/components/common/NavTab.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Sidebar: typeof import('./src/components/common/Sidebar.vue')['default']

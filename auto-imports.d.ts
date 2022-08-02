@@ -6,6 +6,7 @@ declare global {
   const IconCarbonLogout: typeof import('~icons/carbon/logout')['default']
   const IconCarbonMinimize: typeof import('~icons/carbon/minimize')['default']
   const IconCarbonMoon: typeof import('~icons/carbon/moon')['default']
+  const IconCarbonSettings: typeof import('~icons/carbon/settings')['default']
   const IconCarbonSun: typeof import('~icons/carbon/sun')['default']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
@@ -269,6 +270,7 @@ declare module '@vue/runtime-core' {
     readonly IconCarbonLogout: UnwrapRef<typeof import('~icons/carbon/logout')['default']>
     readonly IconCarbonMinimize: UnwrapRef<typeof import('~icons/carbon/minimize')['default']>
     readonly IconCarbonMoon: UnwrapRef<typeof import('~icons/carbon/moon')['default']>
+    readonly IconCarbonSettings: UnwrapRef<typeof import('~icons/carbon/settings')['default']>
     readonly IconCarbonSun: UnwrapRef<typeof import('~icons/carbon/sun')['default']>
     readonly asyncComputed: UnwrapRef<typeof import('@vueuse/core')['asyncComputed']>
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
