@@ -7,7 +7,7 @@ const close = ()=>{
 </script>
 <template>
   <div class="tab-bar">
-    <div v-for="item in tabState.tabs" :class="{active: item.active}" class="tab-item">
+    <div v-for="item in tabState.tabs" :key="item.path" :class="{active: item.active}" class="tab-item">
       {{ item.name }}
        <ep-close @click="close" class="close-icon"/>
     </div>
@@ -20,7 +20,7 @@ const close = ()=>{
   height: 30px;
   .tab-item {
     display: inline-block;
-    padding-left: 10px;
+    padding: 0 25px 0 10px;
     height: 30px;
     background: var(--el-color-info-light-7);
     line-height: 30px;

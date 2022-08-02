@@ -22,11 +22,27 @@ export const useTabsStore = defineStore("tabs", {
   },
   actions: {
     storeTab(path: string, to: RouteLocationNormalized) {
-      Object.keys(this.tabs).forEach((key) => {
-        this.tabs[key].active = false
+      if (!path) return
+      Object.keys(this.tabs).forEach((k) => {
+        this.tabs[k].active = false
       })
       // 不存在
-      if (!this.tabs[path]) this.tabs[path] = { ...to, active: true }
+      if (!this.tabs[path]) {
+        console.log(to)
+        this.tabs[path] = {
+          hash: to.hash,
+          href: to.href,
+          redirectedFrom: to.redirectedFrom,
+          matched: to.matched,
+          fullPath: to.fullPath,
+          path: to.path,
+          meta: to.meta,
+          name: to.name,
+          query: to.query,
+          params: to.params,
+          active: true,
+        }
+      } else this.tabs[path].active = true
     },
     activeTab(path: string) {
       router.push
