@@ -1,5 +1,6 @@
 <script lang="ts" setup name="PageNotFound">
 // test
+var a= 1
 </script>
 
 <template>

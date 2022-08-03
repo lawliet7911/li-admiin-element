@@ -1,6 +1,7 @@
 import path from "path"
 import { defineConfig } from "vite"
-import  vitePlugins from "./plugins"
+import vitePlugins from "./plugins"
+
 // import dotenv from "dotenv"
 // dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
 

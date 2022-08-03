@@ -9,7 +9,7 @@ export interface Options {
 export default (options: Options = {}): Plugin => {
   return {
     name: "vite-plugin-vue-setup-name",
-    // enforce: "post",
+    enforce: "pre",
     async transform(code, id) {
       if (id.includes(".vue")) {
         return addScriptName(code, id)
@@ -22,20 +22,19 @@ export default (options: Options = {}): Plugin => {
 const addScriptName = (code: string, id: string) => {
   const { descriptor } = parse(code)
   if (!descriptor.script && descriptor.scriptSetup) {
-    // let result = compileScript(descriptor, { id })
-    let result = descriptor.scriptSetup
+    let result = compileScript(descriptor, { id })
+    // let result = descriptor.scriptSetup
 
     let name = result.attrs.name
     let lang = result.attrs.lang
     if (name) {
       let codeStr =
-        code +
         `\n<script ${lang ? `lang="${lang}"` : ""}>
       import { defineComponent } from 'vue'
       export default defineComponent({
         name: '${name}',
       })
-      </script>\n`
+      </script>\n` + code
       // return codeStr
       return {
         code: codeStr,

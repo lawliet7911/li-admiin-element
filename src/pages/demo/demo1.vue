@@ -1,7 +1,6 @@
 <script lang="ts" setup name="demo1">
-//1
-let a = 1;
-console.log(a);
+// 2313
+var a= 1
 </script>
 <template>
   <div class="demo">
