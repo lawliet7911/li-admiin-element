@@ -8,9 +8,9 @@ const close = ()=>{
 </script>
 <template>
   <div class="tab-bar">
-    <div v-for="item in tabState.tabs" :key="item.path" :class="{active: item.active}" class="tab-item">
+    <div v-for="item in tabState.tabs" :key="item.path" @click.stop="tabState.activeTab(item.path)" :class="{active: item.active}" class="tab-item">
       {{ item.name }}
-       <ep-close @click="tabState.closeTab(item.path)" class="close-icon"/>
+       <ep-close @click.stop="tabState.closeTab(item.path)" class="close-icon"/>
     </div>
   </div>
 </template>

@@ -15,14 +15,13 @@ export const useTabsStore = defineStore("tabs", {
   state() {
     return {
       tabs: <any>{},
-      include: <any>[]
+      include: <any>[],
     }
   },
   actions: {
     storeTab(path: string, to: RouteLocationNormalized) {
       if (!path) return
-      if(this.include.indexOf(to.name) < 0)
-      this.include.push(to.name)
+      if (this.include.indexOf(to.name) < 0) this.include.push(to.name)
       Object.keys(this.tabs).forEach((k) => {
         this.tabs[k].active = false
       })
@@ -49,14 +48,14 @@ export const useTabsStore = defineStore("tabs", {
     },
     activeTab(path: string) {
       let router = useRouter()
-      router.push
+      router.push({ path })
     },
-    closeTab(path:string) {
-      if(!path) return
-      let index = this.include.indexOf(path);
-      this.include.splice(index,1);
+    closeTab(path: string) {
+      if (!path) return
+      let index = this.include.indexOf(path)
+      this.include.splice(index, 1)
       this.tabs[path] = null
       delete this.tabs[path]
-    }
+    },
   },
 })
