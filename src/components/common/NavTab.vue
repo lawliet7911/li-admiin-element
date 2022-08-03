@@ -3,13 +3,14 @@ import { useTabsStore } from '~/store'
 
 let tabState = useTabsStore()
 const close = ()=>{
+
 }
 </script>
 <template>
   <div class="tab-bar">
     <div v-for="item in tabState.tabs" :key="item.path" :class="{active: item.active}" class="tab-item">
       {{ item.name }}
-       <ep-close @click="close" class="close-icon"/>
+       <ep-close @click="tabState.closeTab(item.path)" class="close-icon"/>
     </div>
   </div>
 </template>

@@ -1,4 +1,3 @@
-import { defineStore } from "pinia"
 import { useLiStorage } from "~/utils/shared"
 
 export const useUserState = defineStore("user", {

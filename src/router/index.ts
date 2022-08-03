@@ -1,14 +1,9 @@
 import {
   createRouter,
   createWebHashHistory,
-  NavigationGuardNext,
-  RouteLocationRaw,
   RouteRecordRaw,
 } from "vue-router"
-import { useUserState } from "~/store"
-import { useTabsStore } from "~/store/tabs"
 import { Guard } from "./routerGuard"
-const DEFAULT_TITLE: string = "Li管理系统"
 
 const routes: RouteRecordRaw[] = [
   {

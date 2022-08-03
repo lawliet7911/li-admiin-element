@@ -1,4 +1,7 @@
-<script lang="ts" setup>
+<script lang="ts" setup name="demo1">
+//1
+let a = 1;
+console.log(a);
 </script>
 <template>
   <div class="demo">

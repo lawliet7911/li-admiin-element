@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+<script lang="ts" setup name="DashBoard">
+// 1
 </script>
 
 <template>

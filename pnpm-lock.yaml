@@ -9,6 +9,7 @@ specifiers:
   axios: ^0.27.2
   dotenv: ^16.0.1
   element-plus: ^2.2.11
+  magic-string: ^0.26.2
   pinia: ^2.0.17
   sass: ^1.54.0
   typescript: ^4.6.4
@@ -28,6 +29,7 @@ dependencies:
   axios: registry.npmjs.org/axios/0.27.2
   dotenv: registry.npmjs.org/dotenv/16.0.1
   element-plus: registry.npmjs.org/element-plus/2.2.11_vue@3.2.37
+  magic-string: registry.npmjs.org/magic-string/0.26.2
   pinia: registry.npmjs.org/pinia/2.0.17_j6bzmzd4ujpabbp5objtwxyjp4
   sass: registry.npmjs.org/sass/1.54.0
   unplugin-auto-import: registry.npmjs.org/unplugin-auto-import/0.10.2_ya3b5ohu7u6blcmxzl5ar2qa2a

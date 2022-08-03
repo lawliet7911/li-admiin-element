@@ -1,4 +1,5 @@
-<script lang="ts" setup>
+<script lang="ts" setup name="PageNotFound">
+// test
 </script>
 
 <template>

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useTabsStore } from '~/store';
+
+let tabState = useTabsStore()
 </script>
 
 <template>
@@ -13,7 +16,7 @@
       <el-main>
         <router-view v-slot="{ Component , route }">
           <transition name="sub">
-            <keep-alive>
+            <keep-alive :include="tabState.include">
               <component :is="Component" />
             </keep-alive>
           </transition>
