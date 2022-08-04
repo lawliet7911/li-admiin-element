@@ -42,5 +42,6 @@ export const Guard = (
 const storeAlive = (to: RouteLocationNormalized) => {
   let tabState = useTabsStore()
   // fullPath包含url参数，不同参数不缓存
-  tabState.storeTab(to.fullPath, to)
+  if(!to.name) return
+  tabState.storeTab(to.name, to)
 }

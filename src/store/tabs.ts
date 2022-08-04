@@ -1,61 +1,53 @@
-import { RouteLocationNormalized } from "vue-router"
-/**
+import type { RouteLocationNormalized, RouteRecordName } from "vue-router"
+import { useRouter } from "vue-router"
+/** 
+ * eg param
  * {
- *    '/path1': {
- *       active: false/true,
- *       ...to: RouteLocationNormalized
- *    },
- *    '/path2': {
+ *    'name': {
  *       active: false/true,
  *       ...to: RouteLocationNormalized
  *    }
  * }
  */
+export type routeStore = RouteLocationNormalized & { active: true | false }
+export type routeStoreValue = {
+  [key: RouteRecordName]: routeStore
+}
 export const useTabsStore = defineStore("tabs", {
   state() {
     return {
-      tabs: <any>{},
+      tabs: <routeStoreValue>{},
       include: <any>[],
     }
   },
   actions: {
-    storeTab(path: string, to: RouteLocationNormalized) {
-      if (!path) return
+    storeTab(name: RouteRecordName, to: RouteLocationNormalized) {
+      if (!name) return
       if (this.include.indexOf(to.name) < 0) this.include.push(to.name)
       Object.keys(this.tabs).forEach((k) => {
         this.tabs[k].active = false
       })
       // 不存在
-      if (!this.tabs[path]) {
-        this.tabs[path] = {
+      if (!this.tabs[name]) {
+        this.tabs[name] = {
           ...to,
           active: true,
         }
-        // this.tabs[path] = {
-        //   hash: to.hash,
-        //   href: to.href,
-        //   redirectedFrom: to.redirectedFrom,
-        //   matched: to.matched,
-        //   fullPath: to.fullPath,
-        //   path: to.path,
-        //   meta: to.meta,
-        //   name: to.name,
-        //   query: to.query,
-        //   params: to.params,
-        //   active: true,
-        // }
-      } else this.tabs[path].active = true
+      } else this.tabs[name].active = true
     },
-    activeTab(path: string) {
-      let router = useRouter()
-      router.push({ path })
-    },
-    closeTab(path: string) {
-      if (!path) return
-      let index = this.include.indexOf(path)
+    async closeTab(name: RouteRecordName): Promise<RouteLocationNormalized | undefined> {
+      if (!name) return undefined
+      let index = this.include.indexOf(name)
       this.include.splice(index, 1)
-      this.tabs[path] = null
-      delete this.tabs[path]
+      // this.tabs[name] = null
+      delete this.tabs[name]
+      let rePath: string = ""
+      if (this.include[index]) {
+        rePath = this.include[index]
+      } else {
+        rePath = this.include[index - 1]
+      }
+      return this.tabs[rePath]
     },
   },
 })

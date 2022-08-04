@@ -1,16 +1,27 @@
 <script lang="ts" setup>
+import type { RouteRecordName } from 'vue-router';
 import { useTabsStore } from '~/store'
 
 let tabState = useTabsStore()
-const close = ()=>{
-
+let router = useRouter()
+const close = async (name: RouteRecordName | null | undefined) => {
+  if(!name) return
+  let to = await tabState.closeTab(name)
+  if (!to) return
+  router.push(to)
 }
+
+const activeTab = (path: string): void => {
+  router.push({ path })
+}
+
 </script>
 <template>
   <div class="tab-bar">
-    <div v-for="item in tabState.tabs" :key="item.path" @click.stop="tabState.activeTab(item.path)" :class="{active: item.active}" class="tab-item">
-      {{ item.name }}
-       <ep-close @click.stop="tabState.closeTab(item.path)" class="close-icon"/>
+    <div v-for="(item, name) in tabState.tabs" :key="item.path" @click.stop="activeTab(item.path)"
+      :class="{ active: item.active }" class="tab-item">
+      {{ item.meta.title }}
+      <ep-close @click.stop="close(item.name)" v-if="(name as any) != 'DashBoard'" class="close-icon" />
     </div>
   </div>
 </template>
@@ -19,6 +30,7 @@ const close = ()=>{
   display: flex;
   padding: 0 20px;
   height: 30px;
+
   .tab-item {
     display: inline-block;
     padding: 0 25px 0 10px;
@@ -32,15 +44,18 @@ const close = ()=>{
     position: relative;
     border-radius: 6px;
     min-width: 100px;
-    &.active{
+
+    &.active {
       background-color: var(--el-bg-color);
     }
+
     &:not(:last-child) {
       margin-right: 2px;
     }
-    
+
     text-align: left;
     top: 0;
+
     .close-icon {
       cursor: pointer;
       font-size: 12px;
@@ -49,6 +64,7 @@ const close = ()=>{
       top: 3px;
       display: none;
     }
+
     &:hover {
       .close-icon {
         display: block;
