@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { useUserState } from './store';
+import { useTabsStore, useUserState } from './store';
 import { useLiStorage } from './utils/shared';
+useDark()
+// 初始化常驻tab菜单
+const tabState = useTabsStore();
+tabState.initTabs();
 
-let isDark = useDark()
+// 判断登录是否过期
 const userState = useUserState();
 let user = useLiStorage.get('user')
 let user_expTime = useLiStorage.get('user-expTime')
