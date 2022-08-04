@@ -20,6 +20,7 @@
     "unplugin-auto-import": "^0.10.2",
     "unplugin-icons": "^0.14.7",
     "unplugin-vue-components": "^0.21.2",
+    "vite-plugin-inspect": "^0.6.0",
     "vue": "^3.2.37",
     "vue-router": "^4.1.3"
   },

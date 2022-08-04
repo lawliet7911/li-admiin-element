@@ -26,7 +26,6 @@ const addScriptName = (code: string, id: string) => {
   const { descriptor } = parse(code)
   if (!descriptor.script && descriptor.scriptSetup) {
     let result = compileScript(descriptor, { id })
-    // let result = descriptor.scriptSetup
     let name = result.attrs.name
     let lang = result.attrs.lang
     if (name) {
@@ -40,12 +39,10 @@ const addScriptName = (code: string, id: string) => {
       </script>\n`
       )
       // return codeStr
-      const map = str().generateMap({
-        source: id,
-        file: id,
-        includeContent: true,
-        hires: true,
-      })
+      const map = str().generateMap()
+      // const map = new ms(codeStr).generateDecodedMap()
+      map.file = filename
+      map.sources = [filename]
       return {
         map: map,
         code: str().toString(),
