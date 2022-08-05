@@ -14,10 +14,12 @@ let tabState = useTabsStore()
         <Header></Header>
       </el-header>
       <el-main>
-        <router-view v-slot="{ Component , route }">
+        <router-view v-slot="{ Component, route }">
           <transition name="sub">
             <keep-alive :include="tabState.include">
-              <component :is="Component" />
+              <div class="main-page">
+                <component :is="Component" />
+              </div>
             </keep-alive>
           </transition>
         </router-view>
@@ -38,6 +40,11 @@ let tabState = useTabsStore()
 
   .right {
     flex: 1;
+
+    .main-page {
+      height: 100%;
+      background-color: var(--el-bg-color);
+    }
   }
 }
 </style>

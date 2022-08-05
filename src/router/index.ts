@@ -26,7 +26,7 @@ const routes: RouteRecordRaw[] = [
         path: "/demo1",
         name: "demo1",
         component: () => import("~/pages/demo/demo1.vue"),
-        meta: { title: "DEmo1" },
+        meta: { title: "tempTable" },
       },
       {
         path: "/:all(.*)*",
