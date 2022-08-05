@@ -46,6 +46,14 @@ let tableColumn = ref<simpleTableColumn[]>([
 
 const visTableColumn = computed(() => tableColumn.value.filter(item => item.visible))
 const onQuery = () => { }
+
+const pageObj = ref({
+  current:  1,
+  total: 3,
+  size: 20
+})
+const handleSizeChange = () => { }
+const handleCurrentChange = () => { }
 </script>
 <template>
   <el-container class="temp-table">
@@ -73,6 +81,17 @@ const onQuery = () => { }
         <el-table-column v-for="column in visTableColumn" :width="column.width" :key="column.label" :type="column.type"
           :prop="column.prop" :align="column.align" :formatter="column.formatter" :label="column.label" />
       </el-table>
+
+      <el-pagination
+        class="pagination"
+        v-model:currentPage="pageObj.current"
+        v-model:page-size="pageObj.size"
+        :page-sizes="[10, 20, 30, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="pageObj.total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
     </el-main>
   </el-container>
 </template>
@@ -91,6 +110,11 @@ const onQuery = () => { }
 
   .main-table {
     width: 100%;
+  }
+
+  .pagination {
+    margin-top: 20px;
+    margin-left: 20px;
   }
 
 }
