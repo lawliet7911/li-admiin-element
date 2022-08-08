@@ -29,6 +29,12 @@ const routes: RouteRecordRaw[] = [
         meta: { title: "列表demo" },
       },
       {
+        path: "/demo2",
+        name: "生码工具",
+        component: () => import("~/pages/demo/demo2.vue"),
+        meta: { title: "列表demo" },
+      },
+      {
         path: "/:all(.*)*",
         name: "PageNotFound",
         component: () => import("~/pages/error-page/[...all].vue"),

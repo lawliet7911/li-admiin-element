@@ -32,6 +32,9 @@ let menuState = useConfigState();
       <router-link to="/demo1">
         <el-menu-item index="1-2">demo1</el-menu-item>
       </router-link>
+       <router-link to="/demo2">
+        <el-menu-item index="1-2">demo2</el-menu-item>
+      </router-link>
       <!-- 404 -->
       <router-link to="/demo404">
         <el-menu-item index="1-3">404page</el-menu-item>
