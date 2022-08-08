@@ -1,17 +1,23 @@
 <script lang="ts" setup>
-import QRCode from "qrcodejs2"
 
-let qrcode = ref(null);
+import { QRCode as qr, QRErrorCorrectLevel, QROptions } from '~/utils/qrcode';
+
+let qrcode: any = ref(null);
 
 
 onMounted(() => {
-  let qrcodeObj = new QRCode(qrcode, {
+  console.log(qr);
+
+  let qrcodeObj = new qr(qrcode.value, <QROptions>{
     width: 420,
     height: 420,
     colorDark: "#000000", //码
     colorLight: "#ffffff", //背景
-    correctLevel: QRCode.CorrectLevel.H
+    correctLevel: QRErrorCorrectLevel.H
   });
+
+  qrcodeObj.clear(); //清除二维码
+  qrcodeObj.makeCode('https://www.baidu.com');
 })
 
 
