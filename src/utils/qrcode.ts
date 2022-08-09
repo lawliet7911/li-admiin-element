@@ -1,6 +1,6 @@
 class QR8bitByte {
-  mode = QRMode.MODE_8BIT_BYTE
-  parsedData: number[] = []
+  mode: number = QRMode.MODE_8BIT_BYTE
+  parsedData: any[]
   data: string = ""
   constructor(data: string) {
     this.data = data
@@ -37,10 +37,10 @@ class QR8bitByte {
     }
   }
 
-  getLength(buffer) {
+  getLength() {
     return this.parsedData.length
   }
-  write(buffer) {
+  write(buffer: QRBitBuffer) {
     for (var i = 0, l = this.parsedData.length; i < l; i++) {
       buffer.put(this.parsedData[i], 8)
     }
@@ -52,7 +52,7 @@ class QRCodeModel {
   PAD1 = 0x11
   dataList = <any>[]
   dataCache = null
-  moduleCount = 0
+  moduleCount: number = 0
   modules = <any>[]
   errorCorrectLevel: number
   typeNumber: number
@@ -66,7 +66,7 @@ class QRCodeModel {
     this.dataList.push(newData)
     this.dataCache = null
   }
-  isDark(row, col) {
+  isDark(row: number, col: number) {
     if (
       row < 0 ||
       this.moduleCount <= row ||
@@ -269,7 +269,10 @@ class QRCodeModel {
   }
 
   createData(typeNumber, errorCorrectLevel, dataList) {
-    var rsBlocks = QRRSBlock.prototype.getRSBlocks(typeNumber, errorCorrectLevel)
+    var rsBlocks = QRRSBlock.prototype.getRSBlocks(
+      typeNumber,
+      errorCorrectLevel
+    )
     var buffer = new QRBitBuffer()
     for (var i = 0; i < dataList.length; i++) {
       var data = dataList[i]
@@ -314,7 +317,7 @@ class QRCodeModel {
     return QRCodeModel.prototype.createBytes(buffer, rsBlocks)
   }
 
-  createBytes(buffer, rsBlocks) {
+  createBytes(buffer:QRBitBuffer, rsBlocks) {
     var offset = 0
     var maxDcCount = 0
     var maxEcCount = 0
@@ -363,14 +366,17 @@ class QRCodeModel {
   }
 }
 
-var QRMode = {
+export type QRModeModel = {
+  [K: string]: number
+}
+const QRMode: QRModeModel = {
   MODE_NUMBER: 1 << 0,
   MODE_ALPHA_NUM: 1 << 1,
   MODE_8BIT_BYTE: 1 << 2,
   MODE_KANJI: 1 << 3,
 }
 const QRErrorCorrectLevel: any = { L: 1, M: 0, Q: 3, H: 2 }
-var QRMaskPattern = {
+const QRMaskPattern = {
   PATTERN000: 0,
   PATTERN001: 1,
   PATTERN010: 2,
@@ -380,7 +386,7 @@ var QRMaskPattern = {
   PATTERN110: 6,
   PATTERN111: 7,
 }
-var QRUtil = {
+const QRUtil = {
   PATTERN_POSITION_TABLE: [
     [],
     [6, 18],
@@ -435,7 +441,7 @@ var QRUtil = {
     (1 << 2) |
     (1 << 0),
   G15_MASK: (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1),
-  getBCHTypeInfo: function (data) {
+  getBCHTypeInfo(data: number) {
     var d = data << 10
     while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
       d ^=
@@ -443,7 +449,7 @@ var QRUtil = {
     }
     return ((data << 10) | d) ^ QRUtil.G15_MASK
   },
-  getBCHTypeNumber: function (data) {
+  getBCHTypeNumber(data: number) {
     var d = data << 12
     while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
       d ^=
@@ -451,7 +457,7 @@ var QRUtil = {
     }
     return (data << 12) | d
   },
-  getBCHDigit: function (data) {
+  getBCHDigit(data: number) {
     var digit = 0
     while (data != 0) {
       digit++
@@ -459,10 +465,10 @@ var QRUtil = {
     }
     return digit
   },
-  getPatternPosition: function (typeNumber) {
+  getPatternPosition(typeNumber: number) {
     return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1]
   },
-  getMask: function (maskPattern, i, j) {
+  getMask(maskPattern: number, i: number, j: number) {
     switch (maskPattern) {
       case QRMaskPattern.PATTERN000:
         return (i + j) % 2 == 0
@@ -484,14 +490,14 @@ var QRUtil = {
         throw new Error("bad maskPattern:" + maskPattern)
     }
   },
-  getErrorCorrectPolynomial: function (errorCorrectLength) {
+  getErrorCorrectPolynomial: function (errorCorrectLength: number) {
     var a = new QRPolynomial([1], 0)
     for (var i = 0; i < errorCorrectLength; i++) {
       a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0))
     }
     return a
   },
-  getLengthInBits: function (mode, type) {
+  getLengthInBits: function (mode:number, type: number) {
     if (1 <= type && type < 10) {
       switch (mode) {
         case QRMode.MODE_NUMBER:
@@ -535,7 +541,7 @@ var QRUtil = {
       throw new Error("type:" + type)
     }
   },
-  getLostPoint: function (qrCode) {
+  getLostPoint (qrCode:QRCodeModel) {
     var moduleCount = qrCode.getModuleCount()
     var lostPoint = 0
     for (var row = 0; row < moduleCount; row++) {
@@ -619,13 +625,13 @@ var QRUtil = {
   },
 }
 var QRMath = {
-  glog: function (n) {
+  glog (n:number) {
     if (n < 1) {
       throw new Error("glog(" + n + ")")
     }
     return QRMath.LOG_TABLE[n]
   },
-  gexp: function (n) {
+  gexp (n:number):number {
     while (n < 0) {
       n += 255
     }
@@ -652,7 +658,7 @@ for (var i = 0; i < 255; i++) {
 }
 class QRPolynomial {
   num: any[]
-  constructor(num, shift) {
+  constructor(num:number[], shift:number) {
     if (num.length == undefined) {
       throw new Error(num.length + "/" + shift)
     }
@@ -665,7 +671,7 @@ class QRPolynomial {
       this.num[i] = num[i + offset]
     }
   }
-  get(index) {
+  get(index:number) {
     return this.num[index]
   }
   getLength() {
@@ -893,7 +899,7 @@ class QRRSBlock {
     return list
   }
   getRsBlockTable(typeNumber: number, errorCorrectLevel: number) {
-    let oQRRSBlock = new QRRSBlock();
+    let oQRRSBlock = new QRRSBlock()
     switch (errorCorrectLevel) {
       case QRErrorCorrectLevel.L:
         return oQRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0]
@@ -912,10 +918,7 @@ class QRRSBlock {
 class QRBitBuffer {
   buffer: any[] = []
   length: number = 0
-  constructor() {
-    this.buffer = []
-    this.length = 0
-  }
+  constructor() {}
   get(index: number) {
     var bufIndex: number = Math.floor(index / 8)
     return ((this.buffer[bufIndex] >>> (7 - (index % 8))) & 1) == 1
@@ -928,8 +931,8 @@ class QRBitBuffer {
   getLengthInBits() {
     return this.length
   }
-  putBit(bit) {
-    var bufIndex = Math.floor(this.length / 8)
+  putBit(bit: boolean) {
+    let bufIndex: number = Math.floor(this.length / 8)
     if (this.buffer.length <= bufIndex) {
       this.buffer.push(0)
     }
@@ -1505,7 +1508,4 @@ class QRCode {
   }
 }
 
-export {
-  QRErrorCorrectLevel,
-  QRCode
-}
+export { QRErrorCorrectLevel, QRCode }
