@@ -49,7 +49,7 @@ const handleCurrentChange = () => { }
 
 <template>
   <div class="auth-main">
-    <div style="position: absolute; margin-top: -10000px;">
+    <div style="position: absolute;">
       <img ref="bgImg" :src="bgImage" />
       <div id="qrcode" ref="qrcode"></div>
       <canvas style="width: 945px;height: 575px;" id="canvas" ref="canvas" width="2126" height="1063"></canvas>

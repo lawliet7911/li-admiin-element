@@ -51,7 +51,7 @@ class QRCodeModel {
   PAD0 = 0xec
   PAD1 = 0x11
   dataList = <any>[]
-  dataCache = null
+  dataCache: null | any[] = null
   moduleCount: number = 0
   modules = <any>[]
   errorCorrectLevel: number
@@ -83,7 +83,7 @@ class QRCodeModel {
   make() {
     this.makeImpl(false, this.getBestMaskPattern())
   }
-  makeImpl(test, maskPattern) {
+  makeImpl(test: boolean, maskPattern: number) {
     this.moduleCount = this.typeNumber * 4 + 17
     this.modules = new Array(this.moduleCount)
     for (var row = 0; row < this.moduleCount; row++) {
@@ -110,7 +110,7 @@ class QRCodeModel {
     }
     this.mapData(this.dataCache, maskPattern)
   }
-  setupPositionProbePattern(row, col) {
+  setupPositionProbePattern(row: number, col: number) {
     for (var r = -1; r <= 7; r++) {
       if (row + r <= -1 || this.moduleCount <= row + r) continue
       for (var c = -1; c <= 7; c++) {
@@ -140,7 +140,7 @@ class QRCodeModel {
     }
     return pattern
   }
-  createMovieClip(target_mc, instance_name, depth) {
+  createMovieClip(target_mc: any, instance_name: any, depth: number) {
     var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth)
     var cs = 1
     this.make()
@@ -196,7 +196,7 @@ class QRCodeModel {
       }
     }
   }
-  setupTypeNumber(test) {
+  setupTypeNumber(test: boolean) {
     var bits = QRUtil.getBCHTypeNumber(this.typeNumber)
     for (var i = 0; i < 18; i++) {
       var mod = !test && ((bits >> i) & 1) == 1
@@ -207,7 +207,7 @@ class QRCodeModel {
       this.modules[(i % 3) + this.moduleCount - 8 - 3][Math.floor(i / 3)] = mod
     }
   }
-  setupTypeInfo(test, maskPattern) {
+  setupTypeInfo(test: boolean, maskPattern: number) {
     var data = (this.errorCorrectLevel << 3) | maskPattern
     var bits = QRUtil.getBCHTypeInfo(data)
     for (var i = 0; i < 15; i++) {
@@ -232,7 +232,7 @@ class QRCodeModel {
     }
     this.modules[this.moduleCount - 8][8] = !test
   }
-  mapData(data, maskPattern) {
+  mapData(data: any[], maskPattern: number) {
     var inc = -1
     var row = this.moduleCount - 1
     var bitIndex = 7
@@ -268,7 +268,7 @@ class QRCodeModel {
     }
   }
 
-  createData(typeNumber, errorCorrectLevel, dataList) {
+  createData(typeNumber: number, errorCorrectLevel: number, dataList: any[]) {
     var rsBlocks = QRRSBlock.prototype.getRSBlocks(
       typeNumber,
       errorCorrectLevel
@@ -317,7 +317,7 @@ class QRCodeModel {
     return QRCodeModel.prototype.createBytes(buffer, rsBlocks)
   }
 
-  createBytes(buffer:QRBitBuffer, rsBlocks) {
+  createBytes(buffer: QRBitBuffer, rsBlocks: any[]) {
     var offset = 0
     var maxDcCount = 0
     var maxEcCount = 0
@@ -497,7 +497,7 @@ const QRUtil = {
     }
     return a
   },
-  getLengthInBits: function (mode:number, type: number) {
+  getLengthInBits: function (mode: number, type: number) {
     if (1 <= type && type < 10) {
       switch (mode) {
         case QRMode.MODE_NUMBER:
@@ -541,7 +541,7 @@ const QRUtil = {
       throw new Error("type:" + type)
     }
   },
-  getLostPoint (qrCode:QRCodeModel) {
+  getLostPoint(qrCode: QRCodeModel) {
     var moduleCount = qrCode.getModuleCount()
     var lostPoint = 0
     for (var row = 0; row < moduleCount; row++) {
@@ -625,13 +625,13 @@ const QRUtil = {
   },
 }
 var QRMath = {
-  glog (n:number) {
+  glog(n: number) {
     if (n < 1) {
       throw new Error("glog(" + n + ")")
     }
     return QRMath.LOG_TABLE[n]
   },
-  gexp (n:number):number {
+  gexp(n: number): number {
     while (n < 0) {
       n += 255
     }
@@ -658,7 +658,7 @@ for (var i = 0; i < 255; i++) {
 }
 class QRPolynomial {
   num: any[]
-  constructor(num:number[], shift:number) {
+  constructor(num: number[], shift: number) {
     if (num.length == undefined) {
       throw new Error(num.length + "/" + shift)
     }
@@ -671,13 +671,13 @@ class QRPolynomial {
       this.num[i] = num[i + offset]
     }
   }
-  get(index:number) {
+  get(index: number) {
     return this.num[index]
   }
   getLength() {
     return this.num.length
   }
-  multiply(e) {
+  multiply(e: QRPolynomial): QRPolynomial {
     var num = new Array(this.getLength() + e.getLength() - 1)
     for (var i = 0; i < this.getLength(); i++) {
       for (var j = 0; j < e.getLength(); j++) {
@@ -1138,8 +1138,10 @@ var Drawing = useSVG
 
           // Fix the margin values as real size.
           var elTable = _el.childNodes[0]
-          var nLeftMarginTable = (_htOption.width - elTable.offsetWidth) / 2
-          var nTopMarginTable = (_htOption.height - elTable.offsetHeight) / 2
+          var nLeftMarginTable =
+            (_htOption.width - (elTable as HTMLElement).offsetWidth) / 2
+          var nTopMarginTable =
+            (_htOption.height - (elTable as HTMLElement).offsetHeight) / 2
 
           if (nLeftMarginTable > 0 && nTopMarginTable > 0) {
             ;(elTable as any).style.margin =
@@ -1194,7 +1196,7 @@ var Drawing = useSVG
        * @param {Function} fFail Occurs if it doesn't support Data URI
        */
       function _safeSetDataURI(fSuccess: Function, fFail: Function) {
-        var self = this
+        var self:any = this
         self._fFail = fFail
         self._fSuccess = fSuccess
 
@@ -1277,7 +1279,7 @@ var Drawing = useSVG
          * @param {QRCode} oQRCode
          */
 
-        draw(oQRCode) {
+        draw(oQRCode: QRCodeModel) {
           var _elImage = this._elImage
           var _oContext = this._oContext
           var _htOption = this._htOption
@@ -1332,7 +1334,7 @@ var Drawing = useSVG
          */
         makeImage() {
           if (this._bIsPainted) {
-            _safeSetDataURI.call(this, this._onMakeImage)
+            _safeSetDataURI.call(this, this._onMakeImage, () => {})
           }
         }
 
@@ -1349,6 +1351,7 @@ var Drawing = useSVG
          * Clear the QRCode
          */
         clear() {
+          if (!this._oContext) return
           this._oContext.clearRect(
             0,
             0,
@@ -1358,11 +1361,7 @@ var Drawing = useSVG
           this._bIsPainted = false
         }
 
-        /**
-         * @private
-         * @param {Number} nNumber
-         */
-        round = function (nNumber) {
+        round(nNumber: number) {
           if (!nNumber) {
             return nNumber
           }
@@ -1426,12 +1425,7 @@ function _getUTF8Length(sText: any) {
 }
 
 export type QROptions = {
-  text: string
-  width?: number
-  height?: number
-  colorDark?: string
-  colorLight?: string
-  correctLevel?: number
+  [K: string]: any
 }
 
 class QRCode {
@@ -1441,7 +1435,7 @@ class QRCode {
   _android: any
   _oQRCode: any
   _el: any
-  constructor(el: HTMLElement | string, vOption: QROptions | string) {
+  constructor(el: HTMLElement | string | null, vOption: QROptions | string) {
     this._htOption = <QROptions>{
       width: 256,
       height: 256,
@@ -1454,17 +1448,18 @@ class QRCode {
     if (typeof vOption === "string") {
       vOption = {
         text: vOption,
+        correctLevel: QRErrorCorrectLevel.H,
       }
     }
 
     // Overwrites options
     if (vOption) {
-      for (var i in vOption) {
+      for (var i in vOption as any) {
         this._htOption[i] = vOption[i]
       }
     }
 
-    if (typeof el == "string") {
+    if (typeof el === "string") {
       el = document.getElementById(el)
     }
 
