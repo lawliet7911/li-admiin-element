@@ -140,7 +140,8 @@ class QRCodeModel {
     }
     return pattern
   }
-  createMovieClip(target_mc: any, instance_name: any, depth: number) {
+  // ？
+  createMovieClip(target_mc: any, instance_name: string, depth: number) {
     var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth)
     var cs = 1
     this.make()
@@ -943,7 +944,7 @@ class QRBitBuffer {
   }
 }
 
-var QRCodeLimitLength = [
+const QRCodeLimitLength:number[][] = [
   [17, 14, 11, 7],
   [32, 26, 20, 14],
   [53, 42, 32, 24],
@@ -1158,36 +1159,6 @@ var Drawing = useSVG
   : (function () {
       // Android 2.1 bug workaround
       // http://code.google.com/p/android/issues/detail?id=5141
-      // don't need that
-      // if (this._android && this._android <= 2.1) {
-      //   var factor = 1 / window.devicePixelRatio
-      //   var drawImage = CanvasRenderingContext2D.prototype.drawImage
-      //   CanvasRenderingContext2D.prototype.drawImage = function (
-      //     image,
-      //     sx,
-      //     sy,
-      //     sw,
-      //     sh,
-      //     dx,
-      //     dy,
-      //     dw,
-      //     dh
-      //   ) {
-      //     if ("nodeName" in image && /img/i.test(image.nodeName)) {
-      //       for (var i = arguments.length - 1; i >= 1; i--) {
-      //         arguments[i] = arguments[i] * factor
-      //       }
-      //     } else if (typeof dw == "undefined") {
-      //       arguments[1] *= factor
-      //       arguments[2] *= factor
-      //       arguments[3] *= factor
-      //       arguments[4] *= factor
-      //     }
-
-      //     drawImage.apply(this, arguments)
-      //   }
-      // }
-
       /**
        * Check whether the user's browser supports Data URI or not
        *

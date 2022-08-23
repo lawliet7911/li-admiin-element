@@ -32,8 +32,11 @@ let menuState = useConfigState();
       <router-link to="/demo1">
         <el-menu-item index="1-2">demo1</el-menu-item>
       </router-link>
-       <router-link to="/demo2">
-        <el-menu-item index="1-2">demo2</el-menu-item>
+      <router-link to="/demo2">
+        <el-menu-item index="1-4">批量生码工具</el-menu-item>
+      </router-link>
+      <router-link to="/customExport">
+        <el-menu-item index="1-5">自定义批量生码</el-menu-item>
       </router-link>
       <!-- 404 -->
       <router-link to="/demo404">

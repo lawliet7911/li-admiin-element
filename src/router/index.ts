@@ -30,9 +30,15 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: "/demo2",
-        name: "生码工具",
-        component: () => import("~/pages/demo/demo2.vue"),
-        meta: { title: "列表demo" },
+        name: "qrExport",
+        component: () => import("~/pages/demo/exportQR.vue"),
+        meta: { title: "生码工具" },
+      },
+      {
+        path: "/customExport",
+        name: "customExport",
+        component: () => import("~/pages/demo/exportQR.vue"),
+        meta: { title: "自定义批量生码" },
       },
       {
         path: "/:all(.*)*",

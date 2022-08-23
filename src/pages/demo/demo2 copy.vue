@@ -62,7 +62,7 @@
 </template>
 
 <script lang="ts" setup>
-import QRCode from "qrcodejs2";
+// import {QRCode} from "qrcodejs2";
 // import * as JSZip from "jszip";
 // import * as saveAs from "file-saver";
 // import * as XLSX from "xlsx";

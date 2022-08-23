@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@iconify-json/carbon': ^1.1.7
   '@iconify-json/ep': ^1.1.6
+  '@types/file-saver': ^2.0.5
   '@types/node': ^18.6.2
   '@vitejs/plugin-vue': ^3.0.0
   '@vueuse/core': ^9.0.0
@@ -28,6 +29,7 @@ specifiers:
 dependencies:
   '@iconify-json/carbon': registry.npmjs.org/@iconify-json/carbon/1.1.7
   '@iconify-json/ep': registry.npmjs.org/@iconify-json/ep/1.1.6
+  '@types/file-saver': registry.npmjs.org/@types/file-saver/2.0.5
   '@types/node': registry.npmjs.org/@types/node/18.6.2
   '@vueuse/core': registry.npmjs.org/@vueuse/core/9.0.0_vue@3.2.37
   axios: registry.npmjs.org/axios/0.27.2
@@ -209,6 +211,12 @@ packages:
     resolution: {integrity: sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@sxzz/popperjs-es/-/popperjs-es-2.11.7.tgz}
     name: '@sxzz/popperjs-es'
     version: 2.11.7
+    dev: false
+
+  registry.npmjs.org/@types/file-saver/2.0.5:
+    resolution: {integrity: sha512-zv9kNf3keYegP5oThGLaPk8E081DFDuwfqjtiTzm6PoxChdJ1raSuADf2YGCVIyrSynLrgc8JWv296s7Q7pQSQ==, registry: https://registry.yarnpkg.com/, tarball: https://registry.npmjs.org/@types/file-saver/-/file-saver-2.0.5.tgz}
+    name: '@types/file-saver'
+    version: 2.0.5
     dev: false
 
   registry.npmjs.org/@types/lodash-es/4.17.6:
