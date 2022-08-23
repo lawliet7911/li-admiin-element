@@ -83,7 +83,7 @@ let opts = shallowRef<HeaderBtnOption[]>([{
       </template>
     </div>
   </div>
-  <NavTab/>
+  <NavTab />
 </template>
 
 <style lang="scss" scoped>
@@ -115,5 +115,4 @@ let opts = shallowRef<HeaderBtnOption[]>([{
   }
 
 }
-
 </style>

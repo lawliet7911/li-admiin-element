@@ -14,10 +14,10 @@ let bgImg: any = ref(null);
 // step 4.download and show progress
 
 // 1 -  4
-const step = ref<number>(1)
+// TODO extract step1-2 and step-4 functions and complete step3 drag qrcode position and settings
+const step = ref<number>(0)
 
 onMounted(() => {
-
 })
 
 
@@ -63,7 +63,7 @@ const drawBgImg = () => {
   ctx.fill();
   let img = new Image();
   img.setAttribute("crossOrigin", "anonymous");
-  img.src = 'https://xm-cdn.oss-cn-hangzhou.aliyuncs.com/img/taxi/code_glass.jpeg'
+  img.src = bgImage.value
   img.onload = function () {
     // 画图
     bgImageElement = img;
@@ -88,9 +88,10 @@ const readExcelCode: UploadProps['onChange'] = (file: UploadFile, files: UploadF
         companyCar.push(carNumber)
         carNoList.push({ carNo: carNumber, company: companyName });
       });
-      splitMap(map)
+      // splitMap(map) todo
       originData = carNoList
       tableData.value = getTableData(pageObj.value.pageNum, pageObj.value.pageSize, originData);
+      step.value++
     } catch (e) {
       // console.warn(e);
       // todo
@@ -101,6 +102,46 @@ const readExcelCode: UploadProps['onChange'] = (file: UploadFile, files: UploadF
   if (!file) return
   if (!file.raw) return
   fileReader.readAsBinaryString(file.raw);
+}
+
+const getBase64 = (imgUrl: string) => {
+  window.URL = window.URL || window.webkitURL;
+  var xhr = new XMLHttpRequest();
+  xhr.open("get", imgUrl, true);
+  // 至关重要
+  xhr.responseType = "blob";
+  xhr.onload = function () {
+    if (this.status == 200) {
+      //得到一个blob对象
+      var blob = this.response;
+      // 至关重要
+      let oFileReader = new FileReader();
+      oFileReader.onloadend = function (e) {
+        if (!e.target) return
+        let base64 = e.target.result;
+        bgImage.value = base64 as string;
+        drawBgImg();
+
+        // console.log("方式一》》》》》》》》》", base64)
+      };
+      oFileReader.readAsDataURL(blob);
+    }
+  };
+  xhr.send();
+}
+
+const chooseImage: UploadProps['onChange'] = (file: UploadFile) => {
+  const reader = new FileReader();
+  if (!file.raw) return
+  reader.readAsDataURL(file.raw);
+  reader.onload = e => {
+    // this.msgSuccess("二维码背景图设置成功");
+    if (!e.target) return
+    bgImg.value.src = e.target.result;
+    bgImage.value = e.target.result as string;
+    drawBgImg()
+    step.value++
+  };
 }
 
 const getTableData = (page = 1, pageSize = 10, totalData: any[] = []) => {
@@ -159,12 +200,209 @@ const splitMap = (map: Map<string, Array<string>>) => {
   })
 }
 
+const downloadBatch = async () => {
+  let mapIter = map[Symbol.iterator]();
+  let task = mapIter.next();
+  let [fileName, queue] = task.value;
+  let flag = true;
+
+  while (flag) {
+    console.log('Loop start-' + fileName);
+    await loopTask(queue, fileName)
+
+    task = mapIter.next()
+    flag = !task.done;
+    if (!flag) {
+      console.log('DONE');
+      break
+    } else {
+      console.log('NEXT MAP');
+    }
+    [fileName, queue] = task.value;
+  }
+}
+const zip: JsZip = new JsZip();
+
+let imgs: any[] = []
+const createQRCode = (url: string, text: string, fileName: string, oneImage: boolean = true, zipName: string) => {
+  qrcode.value.innerHTML = "";
+  let codeImg = new qr(qrcode.value, {
+    width: 420,
+    height: 420,
+    colorDark: "#000000", //码
+    colorLight: "#ffffff", //背景
+    correctLevel: QRErrorCorrectLevel.H
+  });
+  codeImg.clear(); //清除二维码
+  codeImg.makeCode(url);
+
+  //找到canvas标签
+  const qrDom = document.getElementById("qrcode")
+  let myCanvas = qrDom && qrDom
+    .getElementsByTagName("canvas");
+  // let img=document.getElementById('qrcode').getElementsByTagName('img')
+  let qrBase64 = myCanvas && myCanvas[0].toDataURL("image/png");
+  if (!qrBase64) return
+  return drawQRCodeOnBg(qrBase64, text, fileName, oneImage, zipName);
+}
+
+const CANVAS_PARAMS: number[] = [0, 0, CANVAS_WIDTH, CANVAS_HEIGHT]
+const drawQRCodeOnBg = (qrBase64: string, text: string, fileName: string, oneImage: boolean, zipName: string) => {
+  return new Promise((resolve, reject) => {
+    let img = new Image();
+    // 防止跨域
+    img.setAttribute("crossOrigin", "anonymous");
+    img.src = qrBase64;
+    console.log('drawing');
+    img.onload = function () {
+      ctx.fillStyle = "#ffffff"; //白色为例子；
+      // 清空
+      ctx.fillRect(...CANVAS_PARAMS); //画布xy wh
+      // 画图
+      ctx.drawImage(bgImageElement, ...CANVAS_PARAMS); //二维码画布
+
+      ctx.drawImage(img, QR_LEFT, QR_TOP, QR_WIDTH, QR_WIDTH); //二维码画布
+
+      // 加文字
+      ctx.font = "bold 64px Microsoft YaHei bolder";
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#ec6723";
+      ctx.fillText(text, 382, 395); //xy
+
+      // 生成图片
+      let base64 = canvas.toDataURL("image/jpeg");
+
+      if (oneImage) {
+        downImg(base64, fileName);
+      } else {
+        imgs.push({ url: base64, name: text });
+        zip.file(fileName + ".jpeg", base64.substring(22), {
+          base64: true
+        });
+        console.log("ok");
+        resolve(true);
+      }
+    };
+  })
+}
+const downImg = (url: string, name: string) => {
+  var a = document.createElement("a");
+  var event = new MouseEvent("click");
+  a.download = name || "photo";
+  a.href = url;
+  a.dispatchEvent(event);
+}
+
+const qrBaseUrl = 'https://www.baidu.com'
+const loopTask = async (queue: any[], zipName: string) => {
+  let _p: any = []
+  queue.forEach(no => {
+    let url = `${qrBaseUrl}?carNo=${no}`;
+    _p.push(createQRCode(url, no, no, false, zipName));
+  })
+  return new Promise((resolve, reject) => {
+    Promise.all(_p).then(res => {
+      zip.generateAsync({ type: "blob" }).then(async (content) => {
+        console.log('start download');
+        // 生成二进制流
+        await saveAs(content, zipName + ".zip"); // 利用file-saver保存文件
+        imgs = [];
+        zip.files = [];
+        resolve(true)
+        // loadingInstance.close();
+      });
+    })
+  })
+
+}
+
+const downOneQRCodeImage = (item: any) => {
+  if (!bgImage) {
+    // this.msgInfo("请选择二维码背景图之后在下载");
+    return;
+  }
+  let carNo = item.carNo;
+  let url = `${qrBaseUrl}?carNo=${carNo}`;
+  createQRCode(url, carNo, carNo, true, '');
+}
+
+const preStep = () => {
+  step.value--
+}
+const nextStep = () => {
+  step.value++
+}
+const startExport = () => {
+  downloadBatch()
+  // last
+  step.value++ // set status finished
+}
+
 
 </script>
 
 
 <template>
   <div class="export-main">
+    <!-- step-bar -->
+    <el-steps :active="step" simple finish-status="success">
+      <el-step title="选择批量导出文件" />
+      <el-step title="选择背景图片" />
+      <el-step title="设置参数和位置" />
+      <el-step title="导出" />
+    </el-steps>
+
+    <!-- step -->
+    <div class="step" v-if="step === 0">
+      <div class="step-title">请选择需要批量生成二维码的Excel文件</div>
+      <div class="upload-container">
+        <el-upload drag accept=".xlsx" :show-file-list="false" :auto-upload="false" :on-change="readExcelCode">
+          <el-icon class="el-icon--upload">
+            <ep-upload-filled />
+          </el-icon>
+          <div class="el-upload__text">
+            将批量生成二维码的文件拖拽到此处 or <em>点击选择</em>
+          </div>
+        </el-upload>
+      </div>
+
+    </div>
+
+    <div class="step" v-else-if="step === 1">
+      <div class="step-title">请选择二维码背景图</div>
+      <div class="upload-container">
+        <el-upload drag accept=".png,.jpeg,.jpg" :show-file-list="false" :auto-upload="false" :on-change="chooseImage">
+          <el-icon class="el-icon--upload">
+            <ep-upload-filled />
+          </el-icon>
+          <div class="el-upload__text">
+            拖拽二维码背景图到此处 or <em>点击选择</em>
+          </div>
+        </el-upload>
+      </div>
+    </div>
+
+    <div class="step" v-else-if="step === 2">
+      STEP3
+    </div>
+
+    <div class="step" v-else-if="step === 3">
+      STEP4
+    </div>
+
+    <div class="step-buttons">
+      <el-button type="primary" @click="preStep()" v-if="step !== 0">上一步</el-button>
+      <!-- <el-button type="primary" @click="nextStep()" v-if="step !== 3">下一步</el-button> -->
+      <el-button type="primary" @click="startExport()" v-if="step === 2">
+        <!-- <el-button type="primary" @click="startExport()" v-if="step === 3"> -->
+        <el-icon>
+          <ep-download />
+        </el-icon>
+        导出
+      </el-button>
+    </div>
+
+    <!-- <div> -->
     <div style="position: absolute;margin-top: -10000px;">
       <img ref="bgImg" :src="bgImage" />
       <div id="qrcode" ref="qrcode"></div>
@@ -172,7 +410,7 @@ const splitMap = (map: Map<string, Array<string>>) => {
       <img style="width: 945px;height: 575px;" />
     </div>
 
-    <div class="commcont">
+    <div class="commcont" v-if="false">
       <div class="table-main">
         <div class="table-top">
           <el-upload class="uploadBtn" ref="upload" action="" :show-file-list="false" :on-change="readExcelCode"
@@ -217,10 +455,26 @@ const splitMap = (map: Map<string, Array<string>>) => {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .export-main {
   height: 100%;
   overflow-y: auto;
+
+  .step {
+    min-height: 300px;
+
+    .step-title {
+      font-size: 22px;
+      padding: 20px 20px 0;
+      text-align: center;
+      font-weight: 500;
+    }
+  }
+
+  .step-buttons {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .table-main {
@@ -306,5 +560,17 @@ const splitMap = (map: Map<string, Array<string>>) => {
   background: #46a6ff;
   border-color: #46a6ff;
   color: #fff;
+}
+
+/* step */
+.upload-container {
+  padding: 20px;
+
+}
+
+:deep(.el-step__title) {
+  text-overflow: ellipsis;
+  word-break: keep-all !important;
+  overflow: hidden;
 }
 </style>

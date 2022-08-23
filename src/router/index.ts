@@ -37,7 +37,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: "/customExport",
         name: "customExport",
-        component: () => import("~/pages/demo/exportQR.vue"),
+        component: () => import("~/pages/demo/exportQRByCustomize.vue"),
         meta: { title: "自定义批量生码" },
       },
       {
