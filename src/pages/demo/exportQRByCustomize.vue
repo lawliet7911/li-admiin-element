@@ -40,6 +40,65 @@ const handleCurrentChange = (num: number) => {
   pageObj.value.pageNum = num
   tableData.value = getTableData(pageObj.value.pageNum, pageObj.value.pageSize, originData);
 }
+const detailVisible = ref<boolean>(false)
+const settingVisible = ref<boolean>(false)
+
+const canvasStyle = computed(() => {
+  return {
+    backgroundImage: `url(${bgImage.value})`,
+    backgroundSize: `100% 100%`,
+    width: `${originImgInfo.value.width}px`,
+    height: `${originImgInfo.value.height}px`,
+  }
+})
+
+const qrCodeStyle = computed(() => {
+  console.log(positionStyle.value)
+  return {
+    width: `${settingForm.value.qrWidth}px`,
+    height: `${settingForm.value.qrWidth}px`,
+    position: `absolute`,
+    left: `${positionStyle.value.x - offsetPosition.value.x}px`,
+    top: `${positionStyle.value.y - offsetPosition.value.y}px`,
+  }
+})
+
+
+
+const showDetail = () => {
+  detailVisible.value = true
+}
+
+// const testd = ref<HTMLElement | null>(null)
+// let { x, y, style } = useDraggable(testd, {
+//   initialValue: { x: 40, y: 40 },
+// })
+const dragElement = ref<HTMLElement | null>(null)
+
+let offsetPosition = ref<any>({})
+let positionStyle = ref<any>({})
+const handleSettingClick = () => {
+  settingVisible.value = true
+  nextTick(() => {
+    console.log(dragElement)
+    let { x, y, style } = useDraggable(dragElement, {
+      initialValue: { x: 40, y: 40 },
+    })
+    offsetPosition.value = {
+      x: dragElement.value?.offsetParent?.offsetTop,
+      y: dragElement.value?.offsetParent?.offsetLeft,
+    }
+    // console.log(style.value)
+
+    // todo unref?
+    positionStyle.value = {
+      x,y
+    }
+  })
+
+}
+
+
 
 let bgImage = ref('')
 let map = new Map();
@@ -71,29 +130,47 @@ const drawBgImg = () => {
   };
 }
 
+let tableTitleKeys = ref<any>([])
+let originExcelData: any[] = []
 const readExcelCode: UploadProps['onChange'] = (file: UploadFile, files: UploadFiles) => {
+  let sheetTitleKeys: string[] = []
+  tableTitleKeys.value = []
+  let transData: any[] = []
   const fileReader = new FileReader();
-  fileReader.onload = ev => {
+  fileReader.onload = event => {
     try {
-      let carNoList: any[] = [];
-      const data = (ev as any).target.result;
+      const data = (event as any).target.result;
       const workbook = XLSX.read(data, { type: "binary" });
-      const wsname = workbook.SheetNames[0]; //取第一张表
-      const ws = XLSX.utils.sheet_to_json(workbook.Sheets[wsname]); //生成json表格内容
-      ws.forEach(item => {
-        let companyName: string = (item as any)["业户名称"];
-        let carNumber: string = (item as any)['车牌号码']
-        let obj = map.get(companyName) || map.set(companyName, []).get(companyName);
-        let companyCar = obj;
-        companyCar.push(carNumber)
-        carNoList.push({ carNo: carNumber, company: companyName });
+      const sheetName = workbook.SheetNames[0]; //取第一张表
+      const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]); //生成json表格内容
+      sheetData.forEach(item => {
+        let o: any = {}
+        Object.keys((item as any)).forEach((key, index) => {
+          let value = (item as any)[key];
+          let alias = `_column_${index}`;
+          (item as any).alias = alias
+          if (!sheetTitleKeys.includes(key)) {
+            sheetTitleKeys.push(key)
+            tableTitleKeys.value.push({ label: key, alias })
+          }
+          o[alias] = value
+        })
+        transData.push(o)
+        // let companyName: string = (item as any)["业户名称"];
+        // let carNumber: string = (item as any)['车牌号码']
+        // let obj = map.get(companyName) || map.set(companyName, []).get(companyName);
+        // let companyCar = obj;
+        // companyCar.push(carNumber)
+        // carNoList.push({ carNo: carNumber, company: companyName });
       });
+      originExcelData = sheetData
+      // console.log(tableTitleKeys)
       // splitMap(map) todo
-      originData = carNoList
+      originData = transData
       tableData.value = getTableData(pageObj.value.pageNum, pageObj.value.pageSize, originData);
       step.value++
     } catch (e) {
-      // console.warn(e);
+      console.warn(e);
       // todo
       // this.msgError("文件类型不正确！");
       return false;
@@ -130,6 +207,15 @@ const getBase64 = (imgUrl: string) => {
   xhr.send();
 }
 
+const qrPosition = ref({
+  left: 0,
+  top: 0
+})
+
+const originImgInfo = ref({
+  width: 0,
+  height: 0
+})
 const chooseImage: UploadProps['onChange'] = (file: UploadFile) => {
   const reader = new FileReader();
   if (!file.raw) return
@@ -138,6 +224,12 @@ const chooseImage: UploadProps['onChange'] = (file: UploadFile) => {
     // this.msgSuccess("二维码背景图设置成功");
     if (!e.target) return
     bgImg.value.src = e.target.result;
+    nextTick(() => {
+      let { naturalWidth, naturalHeight } = bgImg.value;
+      originImgInfo.value.width = naturalWidth
+      originImgInfo.value.height = naturalHeight
+    })
+
     bgImage.value = e.target.result as string;
     drawBgImg()
     step.value++
@@ -326,6 +418,12 @@ const downOneQRCodeImage = (item: any) => {
   createQRCode(url, carNo, carNo, true, '');
 }
 
+
+const settingForm = ref({
+  link: '',
+  qrWidth: 400
+})
+
 const preStep = () => {
   step.value--
 }
@@ -344,6 +442,7 @@ const startExport = () => {
 
 <template>
   <div class="export-main">
+
     <!-- step-bar -->
     <el-steps :active="step" simple finish-status="success">
       <el-step title="选择批量导出文件" />
@@ -383,7 +482,32 @@ const startExport = () => {
     </div>
 
     <div class="step" v-else-if="step === 2">
-      STEP3
+      <div class="step-title">二维码参数设置</div>
+      <div class="settings">
+        <el-button type="primary" size="small" @click="showDetail()">查看导出列表</el-button>
+        <el-button type="primary" size="small" @click="handleSettingClick()">设置二维码位置</el-button>
+      </div>
+      <div class="detail">
+        <el-descriptions title="二维码背景参数">
+          <el-descriptions-item label="宽：">{{ originImgInfo.width }}</el-descriptions-item>
+          <el-descriptions-item label="高：">{{ originImgInfo.height }}</el-descriptions-item>
+        </el-descriptions>
+        <el-descriptions title="导入文件字段别名">
+          <el-descriptions-item v-for="item in tableTitleKeys" :key="item.alias" :label="item.label + '：'">{{ item.alias
+          }}</el-descriptions-item>
+        </el-descriptions>
+        <el-descriptions title="二维码位置">
+          <el-descriptions-item label="X：">{{ qrPosition.left }}</el-descriptions-item>
+          <el-descriptions-item label="Y：">{{ qrPosition.top }}</el-descriptions-item>
+        </el-descriptions>
+        <el-form :model="settingForm" label-width="120px">
+          <el-form-item label="二维码链接">
+            <el-input v-model="settingForm.link" />
+          </el-form-item>
+
+        </el-form>
+
+      </div>
     </div>
 
     <div class="step" v-else-if="step === 3">
@@ -410,48 +534,47 @@ const startExport = () => {
       <img style="width: 945px;height: 575px;" />
     </div>
 
-    <div class="commcont" v-if="false">
-      <div class="table-main">
-        <div class="table-top">
-          <el-upload class="uploadBtn" ref="upload" action="" :show-file-list="false" :on-change="readExcelCode"
-            :auto-upload="false">
-            <el-button slot="trigger" type="primary">
-              <el-icon size="14">
-                <ep-upload />
-              </el-icon>
-              导入车牌号
-            </el-button>
-          </el-upload>
+    <el-dialog v-model="detailVisible" width="70%" title="导出列表/单个导出" destroy-on-close center>
 
+      <el-descriptions title="导入文件字段别名">
+        <el-descriptions-item v-for="item in tableTitleKeys" :key="item.alias" :label="item.label + '：'">{{ item.alias
+        }}
+        </el-descriptions-item>
+      </el-descriptions>
+      <el-table :data="tableData" border style="width: 100%">
+        <el-table-column type="index" label="序号" align="center" width="55px"> </el-table-column>
+        <el-table-column v-for="item in tableTitleKeys" :key="item.alias" :prop="item.alias" :label="item.label">
+          <template #default="{ row }">
+            {{ row[item.alias] }}
+          </template>
+        </el-table-column>
 
-          <el-button class="allExpListBtn" type="primary" @click="downloadBatch">
-            <el-icon size="14">
-              <ep-download />
-            </el-icon>
-            批量导出二维码
-          </el-button>
+        <el-table-column label="操作">
+          <template #default="{ row }">
+            <el-button type="text" @click="downOneQRCodeImage(row)">下载二维码</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-pagination class="page-main" background layout="total, prev, pager, next, jumper, sizes"
+        @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-size="pageObj.pageSize"
+        :current-page="pageObj.pageNum" :page-sizes="[100, 200, 300, 400]" :total="pageObj.total">
+      </el-pagination>
+
+    </el-dialog>
+
+    <el-dialog v-model="settingVisible" fullscreen title="二维码设置" center>
+      <div class="canvas-container">
+        <div class="_l">
+          <div class="canvas-base" :style="canvasStyle">
+            <div class="drag" ref="dragElement" :style="qrCodeStyle"></div>
+          </div>
         </div>
-        <div class="table-body">
-          <el-table :data="tableData" border style="width: 100%">
-            <el-table-column type="index" label="序号"> </el-table-column>
-            <el-table-column prop="carNo" label="车牌号"> </el-table-column>
-            <el-table-column prop="company" label="企业"> </el-table-column>
-
-            <el-table-column label="操作">
-              <template slot-scope="{row}">
-                <el-button type="text" @click="downOneQRCodeImage(row)">下载二维码</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-
-          <el-pagination class="page-main" background layout="total, prev, pager, next, jumper, sizes"
-            @size-change="handleSizeChange" @current-change="handleCurrentChange" :page-size="pageObj.pageSize"
-            :current-page="pageObj.pageNum" :page-sizes="[100, 200, 300, 400]" :total="pageObj.total">
-          </el-pagination>
-
-        </div>
+        <div class="_r"></div>
       </div>
-    </div>
+
+    </el-dialog>
+
   </div>
 </template>
 
@@ -463,17 +586,50 @@ const startExport = () => {
   .step {
     min-height: 300px;
 
+    >div {
+      padding: 20px;
+    }
+
     .step-title {
       font-size: 22px;
       padding: 20px 20px 0;
       text-align: center;
       font-weight: 500;
     }
+
+    .settings {
+      padding: 20px;
+    }
+
   }
 
   .step-buttons {
     display: flex;
     justify-content: center;
+  }
+
+
+
+}
+
+.canvas-container {
+  display: flex;
+
+  ._l {
+    flex: 1;
+    overflow: auto;
+
+    .canvas-base {
+      position: relative;
+    }
+
+    .drag {
+      background: #ccc;
+    }
+  }
+
+  ._r {
+    width: 200px;
   }
 }
 
