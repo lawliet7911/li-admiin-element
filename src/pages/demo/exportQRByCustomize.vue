@@ -5,6 +5,8 @@ import JsZip from "jszip"
 import { saveAs } from "file-saver"
 import * as XLSX from "xlsx"
 import { UploadFile, UploadFiles, UploadProps } from 'element-plus';
+import { useMyDraggable } from '~/use/draggable' 
+
 let qrcode: any = ref(null);
 let bgImg: any = ref(null);
 
@@ -70,7 +72,7 @@ const showDetail = () => {
 }
 
 // const testd = ref<HTMLElement | null>(null)
-// let { x, y, style } = useDraggable(testd, {
+// let { x, y, style } = useMyDraggable(testd, {
 //   initialValue: { x: 40, y: 40 },
 // })
 const dragElement = ref<HTMLElement | null>(null)
@@ -81,18 +83,16 @@ const handleSettingClick = () => {
   settingVisible.value = true
   nextTick(() => {
     console.log(dragElement)
-    let { x, y, style } = useDraggable(dragElement, {
+    let { x, y, style } = useMyDraggable(dragElement, {
       initialValue: { x: 40, y: 40 },
+      draggingElement: dragElement.value?.parentElement
     })
     offsetPosition.value = {
-      x: dragElement.value?.offsetParent?.offsetTop,
-      y: dragElement.value?.offsetParent?.offsetLeft,
+      x: dragElement.value?.parentElement?.offsetTop,
+      y: dragElement.value?.parentElement?.offsetLeft,
     }
-    // console.log(style.value)
-
-    // todo unref?
     positionStyle.value = {
-      x,y
+      x, y
     }
   })
 
