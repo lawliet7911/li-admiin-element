@@ -75,6 +75,27 @@ const showDetail = () => {
 const dragElement = ref<HTMLElement | null>(null)
 let { x, y, position } = useMyDraggable(dragElement, {})
 
+const innerVisible = ref(false)
+const selectedLabel = ref({})
+const canvasLabels = ref<any[]>([])
+
+// add label
+const addLabel = () => {
+  innerVisible.value = true
+  // 1.select a label alias(_column_0,_column_1...) from imported xlsx
+  // TODO
+  // 2.add label into canvas base
+  // 3.create draggable labels and store positions
+  // 4.can also set text onto label for preview
+}
+
+const handleConfirmAddLabelClick = () => {
+  // labels are repeatable
+  canvasLabels.value.push({ ...selectedLabel.value })
+  innerVisible.value = false
+  selectedLabel.value = {}
+}
+
 const handleSettingClick = () => {
   settingVisible.value = true
 }
@@ -186,10 +207,6 @@ const getBase64 = (imgUrl: string) => {
   xhr.send();
 }
 
-const qrPosition = ref({
-  left: 0,
-  top: 0
-})
 
 const originImgInfo = ref({
   width: 0,
@@ -476,8 +493,8 @@ const startExport = () => {
           }}</el-descriptions-item>
         </el-descriptions>
         <el-descriptions title="二维码位置">
-          <el-descriptions-item label="X：">{{ qrPosition.left }}</el-descriptions-item>
-          <el-descriptions-item label="Y：">{{ qrPosition.top }}</el-descriptions-item>
+          <el-descriptions-item label="X：">{{ position.x }}</el-descriptions-item>
+          <el-descriptions-item label="Y：">{{ position.y }}</el-descriptions-item>
         </el-descriptions>
         <el-form :model="settingForm" label-width="120px">
           <el-form-item label="二维码链接">
@@ -543,13 +560,58 @@ const startExport = () => {
     </el-dialog>
 
     <el-dialog v-model="settingVisible" fullscreen title="二维码设置" center>
+      <el-dialog v-model="innerVisible" width="30%" title="添加Label" append-to-body>
+        <div class="setting-item">
+          <div class="label">label</div>
+          <div class="value">
+            <el-select v-model="selectedLabel" value-key="alias" placeholder="选择label">
+              <el-option v-for="item in tableTitleKeys" :label="item.label" :value="item" :key="item.alias"></el-option>
+            </el-select>
+          </div>
+        </div>
+
+        <el-button @click="handleConfirmAddLabelClick">
+          添加
+        </el-button>
+      </el-dialog>
       <div class="canvas-container">
         <div class="_l">
           <div class="canvas-base" :style="canvasStyle">
             <div class="drag" ref="dragElement" :style="qrCodeStyle"></div>
           </div>
         </div>
-        <div class="_r"></div>
+        <div class="_r">
+          <div class="tips">
+            <span class="notice">TIP：</span>
+            拖动左侧元素确定二维码、label位置，或者在右侧输入框中微调修改位置
+          </div>
+          <div class="sub-title">二维码位置</div>
+          <div class="setting-item">
+            <div class="label">X</div>
+            <div class="value">
+              <el-input-number type="number" v-model="position.x" />
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="label">Y</div>
+            <div class="value">
+              <el-input-number type="number" v-model="position.y" />
+            </div>
+          </div>
+
+          <div class="sub-title">其他label</div>
+          <el-button @click="addLabel">
+            <el-icon class="mr5">
+              <ep-plus />
+            </el-icon>
+            添加
+          </el-button>
+          <div class="setting-columns">
+            <div class="columns" v-for="item in canvasLabels">
+              {{item.label}} : {{item.alias}}</div>
+          </div>
+        </div>
       </div>
 
     </el-dialog>
@@ -607,8 +669,50 @@ const startExport = () => {
     }
   }
 
+  --block-tip-bg-color: rgba(var(--el-color-primary-rgb), .1);
+
   ._r {
     width: 200px;
+    box-sizing: border-box;
+    padding: 10px;
+
+    .tips {
+      padding: 8px 16px;
+      background-color: var(--block-tip-bg-color);
+      border-radius: 4px;
+      border-left: 5px solid var(--el-color-primary);
+      margin: 0 0 20px 0;
+      font-size: 13px;
+      line-height: 1.3;
+
+      .notice {
+        font-weight: bold;
+        font-size: 16px;
+        color: red;
+      }
+    }
+
+    .sub-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+  }
+
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+
+  .label {
+    width: 40px;
+  }
+
+  .value {
+    flex: 1;
   }
 }
 
