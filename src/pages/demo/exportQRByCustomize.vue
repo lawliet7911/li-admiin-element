@@ -5,7 +5,7 @@ import JsZip from "jszip"
 import { saveAs } from "file-saver"
 import * as XLSX from "xlsx"
 import { UploadFile, UploadFiles, UploadProps } from 'element-plus';
-import { useMyDraggable } from '~/use/draggable' 
+import { useMyDraggable } from '~/use/draggable'
 
 let qrcode: any = ref(null);
 let bgImg: any = ref(null);
@@ -54,14 +54,14 @@ const canvasStyle = computed(() => {
   }
 })
 
+
 const qrCodeStyle = computed(() => {
-  console.log(positionStyle.value)
   return {
     width: `${settingForm.value.qrWidth}px`,
     height: `${settingForm.value.qrWidth}px`,
     position: `absolute`,
-    left: `${positionStyle.value.x - offsetPosition.value.x}px`,
-    top: `${positionStyle.value.y - offsetPosition.value.y}px`,
+    left: `${position.value.x}px`,
+    top: `${position.value.y}px`,
   }
 })
 
@@ -71,34 +71,13 @@ const showDetail = () => {
   detailVisible.value = true
 }
 
-// const testd = ref<HTMLElement | null>(null)
-// let { x, y, style } = useMyDraggable(testd, {
-//   initialValue: { x: 40, y: 40 },
-// })
+// drag qr
 const dragElement = ref<HTMLElement | null>(null)
+let { x, y, position } = useMyDraggable(dragElement, {})
 
-let offsetPosition = ref<any>({})
-let positionStyle = ref<any>({})
 const handleSettingClick = () => {
   settingVisible.value = true
-  nextTick(() => {
-    console.log(dragElement)
-    let { x, y, style } = useMyDraggable(dragElement, {
-      initialValue: { x: 40, y: 40 },
-      draggingElement: dragElement.value?.parentElement
-    })
-    offsetPosition.value = {
-      x: dragElement.value?.parentElement?.offsetTop,
-      y: dragElement.value?.parentElement?.offsetLeft,
-    }
-    positionStyle.value = {
-      x, y
-    }
-  })
-
 }
-
-
 
 let bgImage = ref('')
 let map = new Map();
